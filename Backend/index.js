@@ -2,10 +2,12 @@ const express = require('express');
 const mongoose = require('mongoose');
 const Todo = require('./Models/Todo');
 const cors = require('cors');
-
+require('dotenv').config();
 
 const app = express();
 const port = 3000;
+
+const nodeEnv = process.env.NODE_ENV || 'development';
 
 // Enabling CORS
 app.use(cors());
@@ -30,9 +32,14 @@ app.post('/todos_create', async (req, res) => {
 
 // Get all todos
 app.get('/todos', async (req, res) => {
-  const todos = await Todo.find();
-  res.json(todos);
+  if (nodeEnv === 'production') {
+      res.status(403).json({ message: 'This feature is not available in the production environment.' });
+  } else {
+      const todos = await Todo.find();
+      res.json(todos);
+  }
 });
+
 
 // Get a single todo by ID
 app.get('/todos/:id', async (req, res) => {
@@ -55,3 +62,7 @@ app.delete('/todos/:id', async (req, res) => {
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}/`);
 });
+
+
+
+
