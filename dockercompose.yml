@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+
+  frontend:
+    build: ./Frontend
+    ports:
+      - "5173:80"
+    networks:
+      - my-network
+    depends_on:
+      - backend
+
+  backend:
+    build: ./Backend
+    ports:
+      - "3100:${PORT}"
+    networks:
+      - my-network
+    depends_on:
+      - database
+    environment:
+      - PORT=${PORT}
+  database:
+    image: mongo
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - my-network
+
+
+networks:
+  my-network:
+
+volumes:
+  mongodb_data:
+
+
